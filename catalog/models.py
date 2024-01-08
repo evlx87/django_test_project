@@ -1,44 +1,29 @@
 from django.db import models
 
-NULLABLE = {'blank': True, 'null': True}
+
 # Create your models here.
-
-
-class Product(models.Model):
-    title = models.CharField(max_length=100, verbose_name='наименование')
-    description = models.TextField(verbose_name='описание', **NULLABLE)
-    preview = models.ImageField(
-        upload_to='products/',
-        verbose_name='изображение',
-        **NULLABLE)
-    category = models.ForeignKey(
-        'catalog.Category',
-        on_delete=models.CASCADE,
-        verbose_name='категория',
-        **NULLABLE)
-    price = models.IntegerField(verbose_name='цена за покупку')
+class BaseModel(models.Model):
+    """
+    Абстрактная модель, предоставляющая поля для отслеживания даты создания
+    и последнего изменения объекта.
+    """
     created = models.DateTimeField(
-        auto_now=False,
-        auto_now_add=False,
-        verbose_name='дата создания',
-        **NULLABLE)
+        auto_now_add=True,
+        verbose_name='дата создания')
     changed = models.DateTimeField(
-        auto_now=False,
-        auto_now_add=False,
-        verbose_name='дата последнего изменения',
-        **NULLABLE)
-
-    def __str__(self):
-        return f'{self.title}: {self.description} - {self.price}'
+        auto_now=True,
+        verbose_name='дата последнего изменения')
 
     class Meta:
-        verbose_name = 'продукт'
-        verbose_name_plural = 'продукты'
+        abstract = True
 
 
 class Category(models.Model):
+    """
+    Модель категории товаров.
+    """
     title = models.CharField(max_length=100)
-    description = models.TextField(**NULLABLE)
+    description = models.TextField(blank=True, null=True)
     ordering = ('title',)
 
     def __str__(self):
@@ -47,3 +32,31 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'категория'
         verbose_name_plural = 'категории'
+
+
+class Product(BaseModel):
+    """
+    Модель продукта.
+    """
+    title = models.CharField(max_length=100, verbose_name='наименование')
+    description = models.TextField(
+        verbose_name='описание', blank=True, null=True)
+    preview = models.ImageField(
+        upload_to='products/',
+        verbose_name='изображение',
+        blank=True,
+        null=True)
+    category = models.ForeignKey(
+        'catalog.Category',
+        on_delete=models.CASCADE,
+        verbose_name='категория',
+        blank=True,
+        null=True)
+    price = models.IntegerField(verbose_name='цена за покупку')
+
+    def __str__(self):
+        return f'{self.title}: {self.description} - {self.price}'
+
+    class Meta:
+        verbose_name = 'продукт'
+        verbose_name_plural = 'продукты'
