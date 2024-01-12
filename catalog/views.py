@@ -26,6 +26,6 @@ def product(request):
     product_list = Product.objects.all()
     context = {
         'page_title': 'Товары',
-        'object_list': product_list
+        'objects_list': product_list
     }
     return render(request, 'product.html', context)
