@@ -1,40 +1,28 @@
 """Модуль для очистки и заполнения базы данных тестовыми товарами и категориями"""
+import json
+import os
+
 from django.core.management import BaseCommand
 from catalog.models import Product, Category
+from config import settings
+
+
+def load_from_json(file_name):
+    with open(os.path.join(settings.JSON_PATH, file_name + '.json'), 'r', encoding='utf-8') as infile:
+        return json.load(infile)
 
 
 class Command(BaseCommand):
-    """
-    Команда для очистки и заполнения базы данных тестовыми товарами и категориями.
-
-    Методы
-    -------
-    handle(self, *args, **options)
-        Очищает таблицы Product и Category, создает новые записи категорий и товаров.
-    """
 
     def handle(self, *args, **options):
-        """
-        Очищает таблицы Product и Category, создает новые записи категорий и товаров.
-        """
-        # Очистка таблиц Product и Category
-        Product.objects.all().delete()
+        categories = load_from_json('categories')
+
         Category.objects.all().delete()
+        [Category.objects.create(**category) for category in categories]
 
-        # Создание новых записей категорий
-        category_list = [
-            {"title": "vegetables", "description": "plants", },
-            {"title": "meat", "description": "animals", },
-            {"title": "chocolate", "description": "sweet food", },
-        ]
-        category_to_create = [Category(**item) for item in category_list]
-        Category.objects.bulk_create(category_to_create)
+        products = load_from_json('products')
 
-        # Создание новых записей товаров
-        product_list = [
-            {"title": "cucumber", "category_id": 25, "price": "150"},
-            {"title": "pork", "category_id": 26, "price": "200"},
-            {"title": "twix", "category_id": 27, "price": "60"},
-        ]
-        product_to_create = [Product(**item) for item in product_list]
-        Product.objects.bulk_create(product_to_create)
+        Product.objects.all().delete()
+        for product in products:
+            product["category"] = Category.objects.get(title=product["category"])
+            Product.objects.create(**product)
