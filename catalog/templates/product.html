@@ -22,22 +22,24 @@
     </header>
         <div class="catalog_product_box">
             {% for object in objects_list %}
-            <div class="card mb-4 box-shadow">
-                <div class="card-header">
-                    <h4>{{ object.title }}</h4>
+
+                <div class="card mb-4 box-shadow">
+                    <div class="card-header">
+                        <h4>{{ object.title }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <img src="{% mediapath object.preview %}" />
+                        <h1 class="card-title pricing-card-title">{{ object.price }} ₽</h1>
+                        <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                            <li>Описание: {{ object.description|truncatechars:100 }}</li>
+                            <li>Категория: {{ object.category }}</li>
+                            <li>Создан: {{ object.created|date:"d.m.Y h:m" }}</li>
+                            <li>Изменен: {{ object.changed|date:"d.m.Y h:m" }}</li>
+                        </ul>
+                        <button type="button" class="btn btn-lg btn-block btn-outline-primary">Добавить в корзину</button>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <img src="{% mediapath object.preview %}" />
-                    <h1 class="card-title pricing-card-title">{{ object.price }} ₽</h1>
-                    <ul class="list-unstyled mt-3 mb-4 text-start m-3">
-                        <li>Описание: {{ object.description|truncatechars:100 }}</li>
-                        <li>Категория: {{ object.category }}</li>
-                        <li>Создан: {{ object.created|date:"d.m.Y h:m" }}</li>
-                        <li>Изменен: {{ object.changed|date:"d.m.Y h:m" }}</li>
-                    </ul>
-                    <button type="button" class="btn btn-lg btn-block btn-outline-primary">Добавить в корзину</button>
-                </div>
-            </div>
+
             {% endfor %}
         </div>
 {% endblock %}
