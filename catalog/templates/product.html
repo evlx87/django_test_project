@@ -1,11 +1,30 @@
 {% extends 'base.html' %}
 {% load tags %}
+
+{% block css %}
+        {% include 'includes/inc__style_css.html' %}
+<style>
+    .catalog_product_box {
+        padding-top: 30px;
+        padding-bottom: 120px;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+</style>
+{% endblock %}
+
 {% block page_content %}
-    {% for object in objects_list %}
-        <div class="col-3">
+    <header>
+        <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+            <h1 class="display-4 fw-normal text-body-emphasis">Каталог товаров</h1>
+        </div>
+    </header>
+        <div class="catalog_product_box">
+            {% for object in objects_list %}
             <div class="card mb-4 box-shadow">
                 <div class="card-header">
-                    <h4 class="my-0 font-weight-normal">{{ object.name }}</h4>
+                    <h4>{{ object.title }}</h4>
                 </div>
                 <div class="card-body">
                     <img src="{% mediapath object.preview %}" />
@@ -19,6 +38,6 @@
                     <button type="button" class="btn btn-lg btn-block btn-outline-primary">Добавить в корзину</button>
                 </div>
             </div>
+            {% endfor %}
         </div>
-    {% endfor %}
 {% endblock %}
