@@ -1,31 +1,106 @@
-from django.shortcuts import render
+from django.views.generic import TemplateView, ListView
 from catalog.models import Product
 
 
-def index(request):
-    context = {
-        'page_title': 'Главная',
-        'objects_list': Product.objects.all()
-    }
-    return render(request, 'index.html', context)
+class IndexView(TemplateView):
+    """
+    Представление, отображающее главную страницу.
+
+    Атрибуты:
+    - template_name (str): Название шаблона для отображения представления.
+
+    Методы:
+    - get_context_data(self, **kwargs): Получает контекстные данные для отображения представления.
+    """
+
+    template_name = 'index.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        Получает контекстные данные для отображения представления.
+
+        Аргументы:
+        - **kwargs: Дополнительные именованные аргументы.
+
+        Возвращает:
+        - dict: Словарь, содержащий контекстные данные.
+        """
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Главная'
+        context['objects_list'] = Product.objects.all()
+        return context
 
 
-def contacts(request):
-    context = {
-        'page_title': 'Контакты'
-    }
-    if request.method == 'POST':
+class ContactsView(TemplateView):
+    """
+    Представление, отображающее страницу контактов.
+
+    Атрибуты:
+    - template_name (str): Название шаблона для отображения представления.
+
+    Методы:
+    - post(self, request, *args, **kwargs): Обрабатывает POST-запрос для отправки формы контактов.
+    - get_context_data(self, **kwargs): Получает контекстные данные для отображения представления.
+    """
+
+    template_name = 'contacts.html'
+
+    def post(self, request, *args, **kwargs):
+        """
+        Обрабатывает POST-запрос для отправки формы контактов.
+
+        Аргументы:
+        - request (HttpRequest): Объект HTTP-запроса.
+        - *args: Дополнительные позиционные аргументы.
+        - **kwargs: Дополнительные именованные аргументы.
+
+        Возвращает:
+        - HttpResponse: HTTP-ответ после обработки POST-запроса.
+        """
         name = request.POST.get('name')
         phone = request.POST.get('phone')
         message = request.POST.get('message')
         print(f'{name} ({phone}): {message}')
-    return render(request, 'contacts.html', context)
+        return self.render_to_response(self.get_context_data())
+
+    def get_context_data(self, **kwargs):
+        """
+        Получает контекстные данные для отображения представления.
+
+        Аргументы:
+        - **kwargs: Дополнительные именованные аргументы.
+
+        Возвращает:
+        - dict: Словарь, содержащий контекстные данные.
+        """
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Контакты'
+        return context
 
 
-def product(request):
-    product_list = Product.objects.all()
+class ProductView(ListView):
+    """
+    Представление, отображающее список продуктов.
+
+    Атрибуты:
+    - template_name (str): Название шаблона для отображения представления.
+    - queryset (QuerySet): Запрос для получения списка продуктов.
+    - context_object_name (str): Имя переменной контекста для списка объектов.
+    - paginate_by (int): Количество продуктов на странице.
+    - ordering (str): Порядок сортировки продуктов в списке.
+    - model (Model): Класс модели продуктов.
+    - context (dict): Дополнительные контекстные данные для отображения представления.
+
+    Методы:
+    - get_context_data(self, **kwargs): Получает контекстные данные для отображения представления.
+    """
+
+    template_name = 'product.html'
+    queryset = Product.objects.all()
+    context_object_name = 'objects_list'
+    paginate_by = 10
+    ordering = ['-date_added']
+    model = Product
     context = {
-        'page_title': 'Товары',
-        'objects_list': product_list
+        'page_title': 'Товары'
     }
-    return render(request, 'product.html', context)
