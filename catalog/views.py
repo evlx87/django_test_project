@@ -80,26 +80,20 @@ class ContactsView(TemplateView):
 
 class ProductView(ListView):
     """
-    Представление, отображающее список продуктов.
+    Этот класс представляет собой представление для отображения списка продуктов.
 
     Атрибуты:
-    - template_name (str): Название шаблона для отображения представления.
-    - queryset (QuerySet): Запрос для получения списка продуктов.
-    - context_object_name (str): Имя переменной контекста для списка объектов.
-    - paginate_by (int): Количество продуктов на странице.
-    - ordering (str): Порядок сортировки продуктов в списке.
-    - model (Model): Класс модели продуктов.
-    - context (dict): Дополнительные контекстные данные для отображения представления.
+        template_name (str): Имя шаблона, используемого для отображения представления.
+        model (class): Класс модели, представляющий данные для отображения.
 
     Методы:
-    - get_context_data(self, **kwargs): Получает контекстные данные для отображения представления.
+        get_context_data(self, **kwargs): Переопределяет метод в родительском классе для предоставления дополнительных данных контекста для отображения.
     """
-
     template_name = 'product.html'
-    queryset = Product.objects.all()
-    context_object_name = 'objects_list'
-    paginate_by = 10
     model = Product
-    context = {
-        'page_title': 'Товары'
-    }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Товары'
+        context['objects_list'] = Product.objects.all()
+        return context
