@@ -99,7 +99,6 @@ class ProductView(ListView):
     queryset = Product.objects.all()
     context_object_name = 'objects_list'
     paginate_by = 10
-    ordering = ['-date_added']
     model = Product
     context = {
         'page_title': 'Товары'
