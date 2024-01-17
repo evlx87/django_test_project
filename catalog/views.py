@@ -13,7 +13,7 @@ class IndexView(TemplateView):
     - get_context_data(self, **kwargs): Получает контекстные данные для отображения представления.
     """
 
-    template_name = 'index.html'
+    template_name = 'catalog/index.html'
 
     def get_context_data(self, **kwargs):
         """
@@ -43,7 +43,7 @@ class ContactsView(TemplateView):
     - get_context_data(self, **kwargs): Получает контекстные данные для отображения представления.
     """
 
-    template_name = 'contacts.html'
+    template_name = 'catalog/contacts.html'
 
     def post(self, request, *args, **kwargs):
         """
@@ -89,7 +89,7 @@ class ProductView(ListView):
     Методы:
         get_context_data(self, **kwargs): Переопределяет метод в родительском классе для предоставления дополнительных данных контекста для отображения.
     """
-    template_name = 'product.html'
+    template_name = 'catalog/product.html'
     model = Product
 
     def get_context_data(self, **kwargs):

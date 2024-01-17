@@ -1,8 +1,8 @@
-{% extends 'base.html' %}
+{% extends 'catalog/base.html' %}
 {% load tags %}
 
 {% block css %}
-        {% include 'includes/inc__style_css.html' %}
+        {% include 'catalog/includes/inc__style_css.html' %}
 <style>
     .catalog_product_box {
         padding-top: 30px;
@@ -13,13 +13,16 @@
     }
 </style>
 {% endblock %}
-
-{% block page_content %}
-    <header>
+{% block page_header %}
+ <header>
         <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
             <h1 class="display-4 fw-normal text-body-emphasis">Каталог товаров</h1>
         </div>
     </header>
+{% endblock %}
+
+{% block page_content %}
+
         <div class="catalog_product_box">
             {% for object in objects_list %}
 

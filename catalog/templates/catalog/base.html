@@ -4,7 +4,7 @@
 
 <head>
     {% block meta %}
-        {% include 'includes/inc__meta.html' %}
+        {% include 'catalog/includes/inc__meta.html' %}
     {% endblock %}
 
     {% block title %}
@@ -14,7 +14,7 @@
     {% endblock %}
 
     {% block css %}
-        {% include 'includes/inc__style_css.html' %}
+        {% include 'catalog/includes/inc__style_css.html' %}
     {% endblock %}
 </head>
 
@@ -111,7 +111,7 @@
             </a>
             <hr>
             {% block main_menu %}
-                {% include 'includes/inc__main_menu.html' %}
+                {% include 'catalog/includes/inc__main_menu.html' %}
             {% endblock %}
             <hr>
             <div class="dropdown">
@@ -136,13 +136,13 @@
             {% block page_header %}
 
             {% endblock %}
-
+<hr>
             {% block page_content %}
 
             {% endblock %}
 
             {% block script %}
-                {% include 'includes/inc__script.html' %}
+                {% include 'catalog/includes/inc__script.html' %}
             {% endblock %}
         </div>
     </main>
