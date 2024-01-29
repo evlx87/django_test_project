@@ -24,6 +24,9 @@
 {% block page_content %}
 
         <div class="catalog_product_box">
+                <div class="col-12 mb-5">
+        <a class="btn btn-outline-primary" href="{% url 'catalog:product-create' %}">Добавить продукт</a>
+    </div>
             {% for object in objects_list %}
 
                 <div class="card mb-4 box-shadow">
@@ -40,6 +43,20 @@
                             <li>Изменен: {{ object.changed|date:"d.m.Y h:m" }}</li>
                         </ul>
                         <button type="button" class="btn btn-lg btn-block btn-outline-primary">Добавить в корзину</button>
+                                           <hr>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="btn-group">
+                            <a href="{% url 'catalog:product-view' object.pk %}" type='button' class="btn btn-sm btn-outline-secondary">
+                                Просмотр
+                            </a>
+                            <a href="{% url 'catalog:product-update' object.pk %}" type="button" class="btn btn-sm btn-outline-secondary">
+                                Редактирование
+                            </a>
+                            <a href="{% url 'catalog:product-delete' object.pk %}" type='button' class="btn btn-sm btn-outline-danger">
+                                Удаление
+                            </a>
+                        </div>
+                    </div>
                     </div>
                 </div>
 
