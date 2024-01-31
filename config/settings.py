@@ -133,3 +133,13 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 JSON_PATH = 'json'
+
+AUTH_USER_MODEL = 'users_auth.User'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/'
+
+EMAIL_HOST = os.getenv('email_host')
+EMAIL_PORT = os.getenv('email_port')
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = os.getenv('email_host_user')
+EMAIL_HOST_PASSWORD = os.getenv('email_host_password')
