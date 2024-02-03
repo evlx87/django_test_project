@@ -1,13 +1,15 @@
+from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import path
 
 from users_auth.apps import UsersAuthConfig
-from users_auth.views import UserLogin, UserLogout, RegisterView, VerifyCodeView
+from users_auth.views import RegisterView, VerifyCodeView, PasswordResetView
 
 app_name = UsersAuthConfig.name
 
 urlpatterns = [
-    path('login/', UserLogin.as_view(), name='login'),
-    path('logout/', UserLogout.as_view(), name='logout'),
+    path('', LoginView.as_view(template_name='users_auth/login_form.html'), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('register/', RegisterView.as_view(), name='register'),
-    path('verify_code/', VerifyCodeView.as_view(), name='verify_code')
+    path('verify_code/', VerifyCodeView.as_view(), name='verify_code'),
+    path('pass_reset/', PasswordResetView.as_view(), name='pass_reset'),
 ]
