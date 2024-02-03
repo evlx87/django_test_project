@@ -1,46 +1,47 @@
 {% extends 'catalog/base.html' %}
 
 {% block page_header %}
- <header>
-        <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-            <h1 class="display-4 fw-normal text-body-emphasis">{{ object.title }}</h1>
-        </div>
-    </header>
+<header>
+    <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+        <h1 class="display-4 fw-normal text-body-emphasis">{{ object.title }}</h1>
+    </div>
+</header>
 {% endblock %}
 
 {% block page_content %}
-    <div class="col-12">
-        <div class="row">
-            <div class="col-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            Информация о продукте
-                        </h3>
-                    </div>
-                    <div class="card-body">
-                        <table class="table">
-                            <tr>
-                                <td>Описание</td>
-                                <td>{{ object.description }}</td>
-                            </tr>
-                            <tr>
-                                <td>Категория</td>
-                                <td>{{ object.category }}</td>
-                            </tr>
-                            <tr>
-                                <td>Цена</td>
-                                <td>{{ object.price }}</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="card-footer"></div>
+<div class="col-12">
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Информация о продукте</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <td>Описание</td>
+                            <td>{{ object.description }}</td>
+                        </tr>
+                        <tr>
+                            <td>Категория</td>
+                            <td>{{ object.category }}</td>
+                        </tr>
+                        <tr>
+                            <td>Цена</td>
+                            <td>{{ object.price }}</td>
+                        </tr>
+                        <tr>
+                            <td>Владелец</td>
+                            <td>{{ object.owner|default:"-" }}</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
-            <div class="col-6">
-                <img src="/media/{{ object.preview }}"/>
-            </div>
-
+        </div>
+        <div class="col-6">
+            <img src="/media/{{ object.preview }}" />
         </div>
     </div>
+</div>
 {% endblock %}
+

@@ -1,5 +1,9 @@
 from django.db import models
 
+from config import settings
+
+NULLABLE = {'blank': True, 'null': True}
+
 
 # Create your models here.
 class BaseModel(models.Model):
@@ -34,7 +38,7 @@ class Category(models.Model):
         verbose_name_plural = 'категории'
 
 
-class Product(BaseModel):
+class Product(models.Model):
     """
     Модель продукта.
     """
@@ -53,6 +57,10 @@ class Product(BaseModel):
         blank=True,
         null=True)
     price = models.IntegerField(verbose_name='цена за покупку')
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        verbose_name='владелец', **NULLABLE)
 
     def __str__(self):
         return f'{self.title}: {self.description} - {self.price}'

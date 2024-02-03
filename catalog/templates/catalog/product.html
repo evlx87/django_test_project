@@ -15,51 +15,52 @@
 {% endblock %}
 {% block page_header %}
  <header>
-        <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-            <h1 class="display-4 fw-normal text-body-emphasis">Каталог товаров</h1>
-        </div>
-    </header>
+     <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+         <h1 class="display-4 fw-normal text-body-emphasis">Каталог товаров</h1>
+     </div>
+ </header>
 {% endblock %}
 
 {% block page_content %}
-
-        <div class="catalog_product_box">
-                <div class="col-12 mb-5">
+<div class="catalog_product_box">
+    <div class="col-12 mb-5">
+        {% if user.is_verified %}
         <a class="btn btn-outline-primary" href="{% url 'catalog:product-create' %}">Добавить продукт</a>
+        {% endif %}
     </div>
-            {% for object in objects_list %}
-
-                <div class="card mb-4 box-shadow">
-                    <div class="card-header">
-                        <h4>{{ object.title }}</h4>
-                    </div>
-                    <div class="card-body">
-                        <img src="{% mediapath object.preview %}" />
-                        <h1 class="card-title pricing-card-title">{{ object.price }} ₽</h1>
-                        <ul class="list-unstyled mt-3 mb-4 text-start m-3">
-                            <li>Описание: {{ object.description|truncatechars:100 }}</li>
-                            <li>Категория: {{ object.category }}</li>
-                            <li>Создан: {{ object.created|date:"d.m.Y h:m" }}</li>
-                            <li>Изменен: {{ object.changed|date:"d.m.Y h:m" }}</li>
-                        </ul>
-                        <button type="button" class="btn btn-lg btn-block btn-outline-primary">Добавить в корзину</button>
-                                           <hr>
-                    <div class="d-flex justify-content-center align-items-center">
-                        <div class="btn-group">
-                            <a href="{% url 'catalog:product-view' object.pk %}" type='button' class="btn btn-sm btn-outline-secondary">
-                                Просмотр
-                            </a>
-                            <a href="{% url 'catalog:product-update' object.pk %}" type="button" class="btn btn-sm btn-outline-secondary">
-                                Редактирование
-                            </a>
-                            <a href="{% url 'catalog:product-delete' object.pk %}" type='button' class="btn btn-sm btn-outline-danger">
-                                Удаление
-                            </a>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-
-            {% endfor %}
+    {% for object in objects_list %}
+    <div class="card mb-4 box-shadow">
+        <div class="card-header">
+            <h4>{{ object.title }}</h4>
         </div>
+        <div class="card-body">
+            <img src="{% mediapath object.preview %}" />
+            <h1 class="card-title pricing-card-title">{{ object.price }} ₽</h1>
+            <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                <li>Описание: {{ object.description|truncatechars:100 }}</li>
+                <li>Категория: {{ object.category }}</li>
+                <li>Создан: {{ object.created|date:"d.m.Y h:m" }}</li>
+                <li>Изменен: {{ object.changed|date:"d.m.Y h:m" }}</li>
+            </ul>
+            <button type="button" class="btn btn-lg btn-block btn-outline-primary">Добавить в корзину</button>
+            <hr>
+            <div class="d-flex justify-content-center align-items-center">
+                <div class="btn-group">
+                    <a href="{% url 'catalog:product-view' object.pk %}" type='button' class="btn btn-sm btn-outline-secondary">
+                        Просмотр
+                    </a>
+                    {% if user.is_verified %}
+                    <a href="{% url 'catalog:product-update' object.pk %}" type="button" class="btn btn-sm btn-outline-secondary">
+                        Редактирование
+                    </a>
+                    <a href="{% url 'catalog:product-delete' object.pk %}" type='button' class="btn btn-sm btn-outline-danger">
+                        Удаление
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}
