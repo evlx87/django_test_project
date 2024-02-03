@@ -2,10 +2,9 @@ import random
 import string
 
 from django.conf import settings
-from django.contrib.auth.views import LoginView, LogoutView
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.crypto import get_random_string
 from django.views import View
 from django.views.generic import CreateView, FormView
@@ -68,7 +67,29 @@ class PasswordResetView(FormView):
             subject='Пароль восстановлен',
             message=f'Ваш новый пароль: {password}',
             from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[user.email],
-            fail_silently=False,
+            recipient_list=[user.email]
         )
         return super().form_valid(form)
+
+
+def reset_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        user = User.objects.get(email=email)
+
+        new_password = ''.join([random.choice(string.ascii_letters + string.digits + '!@#$%&') for _ in range(12)])
+
+        send_mail(
+            subject='Пароль восстановлен',
+            message=f'Ваш новый пароль: {new_password}',
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[user.email]
+        )
+
+        user.set_password(new_password)
+        user.save()
+        return redirect(reverse('users_auth:login'))
+    else:
+        form = NewPasswordForm
+        context = {'form': form}
+        return render(request, 'users_auth/password_reset_form.html', context)
