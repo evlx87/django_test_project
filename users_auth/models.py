@@ -1,3 +1,5 @@
+import random
+
 from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
 
@@ -6,10 +8,28 @@ NULLABLE = {'blank': True, 'null': True}
 
 
 class User(AbstractUser):
+    username = None
     email = models.EmailField(unique=True, verbose_name='E-mail')
-    phone = models.CharField(max_length=20, verbose_name='Номер телефона', **NULLABLE)
-    avatar = models.ImageField(upload_to='avatars/', verbose_name='Аватар', **NULLABLE)
-    country = models.CharField(max_length=50, verbose_name='Страна', **NULLABLE)
+    phone = models.CharField(
+        max_length=20,
+        verbose_name='Номер телефона',
+        **NULLABLE)
+    avatar = models.ImageField(
+        upload_to='avatars/',
+        verbose_name='Аватар',
+        **NULLABLE)
+    country = models.CharField(
+        max_length=50,
+        verbose_name='Страна',
+        **NULLABLE)
+
+    code = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+    verify_code = models.CharField(
+        max_length=6,
+        default=code,
+        verbose_name='Код вeрификации')
+    is_verified = models.BooleanField(
+        default=False, verbose_name='Верификация')
 
     user_permissions = models.ManyToManyField(
         'auth.Permission',

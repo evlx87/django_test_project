@@ -1,0 +1,15 @@
+{% extends 'catalog/base.html' %}
+
+{% block page_content %}
+<form class="row" method="post">
+    <div class="col-6">
+        <div class="card">
+            <div class="card-body">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Войти</button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
