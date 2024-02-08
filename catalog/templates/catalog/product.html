@@ -47,11 +47,15 @@
             <hr>
             <div class="d-flex justify-content-center align-items-center">
                 <div class="btn-group">
-                    <a type="button" class="btn btn-sm btn-outline-secondary">В корзину</a>
+                    <a type="button" class="btn btn-sm btn-outline-secondary btn-warning">В корзину</a>
                     <a href="{% url 'catalog:product-view' object.pk %}" type='button' class="btn btn-sm btn-outline-secondary">Просмотр</a>
                     {% if user.is_verified %}
+                    {% if perms.catalog.change_product or user == object.owner %}
                     <a href="{% url 'catalog:product-update' object.pk %}" type="button" class="btn btn-sm btn-outline-secondary">Редактирование</a>
+                    {% endif %}
+                    {% if perms.catalog.delete_product %}
                     <a href="{% url 'catalog:product-delete' object.pk %}" type='button' class="btn btn-sm btn-outline-danger">Удаление</a>
+                    {% endif %}
                     {% endif %}
                 </div>
             </div>
