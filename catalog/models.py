@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from config import settings
 
@@ -31,7 +32,7 @@ class Category(models.Model):
     ordering = ('title',)
 
     def __str__(self):
-        return f'{self.title}: {self.description}'
+        return f'{self.title}'
 
     class Meta:
         verbose_name = 'категория'
@@ -56,11 +57,22 @@ class Product(models.Model):
         verbose_name='категория',
         blank=True,
         null=True)
-    price = models.IntegerField(verbose_name='цена за покупку')
+    price = models.IntegerField(
+        verbose_name='цена за покупку')
+    time_create = models.DateTimeField(
+        default=timezone.now,
+        verbose_name='дата создания')
+    time_update = models.DateTimeField(
+        auto_now=True,
+        verbose_name='дата обновления')
+
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         verbose_name='владелец', **NULLABLE)
+    is_published = models.BooleanField(
+        default=False,
+        verbose_name='Опубликовано')
 
     def __str__(self):
         return f'{self.title}: {self.description} - {self.price}'
@@ -68,6 +80,8 @@ class Product(models.Model):
     class Meta:
         verbose_name = 'продукт'
         verbose_name_plural = 'продукты'
+        ordering = ['pk']
+        permissions = [('set_published', 'Can publish products'),]
 
 
 class Version(models.Model):

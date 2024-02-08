@@ -29,12 +29,14 @@
         {% endif %}
     </div>
     {% for object in objects_list %}
-    <div class="card mb-4 box-shadow">
+    <div class="card mb-4 box-shadow" style="width: 620px;">
         <div class="card-header">
             <h4>{{ object.title }}</h4>
         </div>
         <div class="card-body">
-            <img src="{% mediapath object.preview %}" />
+            <div style="height: 200px; display: flex; justify-content: center; align-items: center;">
+                <img src="{% mediapath object.preview %}" style="max-height: 100%; max-width: 100%; height: auto; width: auto;">
+            </div>
             <h1 class="card-title pricing-card-title">{{ object.price }} ₽</h1>
             <ul class="list-unstyled mt-3 mb-4 text-start m-3">
                 <li>Описание: {{ object.description|truncatechars:100 }}</li>
@@ -42,20 +44,18 @@
                 <li>Создан: {{ object.created|date:"d.m.Y h:m" }}</li>
                 <li>Изменен: {{ object.changed|date:"d.m.Y h:m" }}</li>
             </ul>
-            <button type="button" class="btn btn-lg btn-block btn-outline-primary">Добавить в корзину</button>
             <hr>
             <div class="d-flex justify-content-center align-items-center">
                 <div class="btn-group">
-                    <a href="{% url 'catalog:product-view' object.pk %}" type='button' class="btn btn-sm btn-outline-secondary">
-                        Просмотр
-                    </a>
+                    <a type="button" class="btn btn-sm btn-outline-secondary btn-warning">В корзину</a>
+                    <a href="{% url 'catalog:product-view' object.pk %}" type='button' class="btn btn-sm btn-outline-secondary">Просмотр</a>
                     {% if user.is_verified %}
-                    <a href="{% url 'catalog:product-update' object.pk %}" type="button" class="btn btn-sm btn-outline-secondary">
-                        Редактирование
-                    </a>
-                    <a href="{% url 'catalog:product-delete' object.pk %}" type='button' class="btn btn-sm btn-outline-danger">
-                        Удаление
-                    </a>
+                    {% if perms.catalog.change_product or user == object.owner %}
+                    <a href="{% url 'catalog:product-update' object.pk %}" type="button" class="btn btn-sm btn-outline-secondary">Редактирование</a>
+                    {% endif %}
+                    {% if perms.catalog.delete_product %}
+                    <a href="{% url 'catalog:product-delete' object.pk %}" type='button' class="btn btn-sm btn-outline-danger">Удаление</a>
+                    {% endif %}
                     {% endif %}
                 </div>
             </div>

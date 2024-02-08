@@ -1,8 +1,12 @@
+import re
+
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.forms import inlineformset_factory
+from django.http import Http404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, CreateView, DetailView, UpdateView, DeleteView
 
-from catalog.forms import ProductForm, VersionForm
+from catalog.forms import ProductForm, VersionForm, ModeratorProductForm
 from catalog.models import Product, Version
 
 
@@ -96,11 +100,19 @@ class ProductView(ListView):
     template_name = 'catalog/product.html'
     model = Product
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] = 'Товары'
         context['objects_list'] = Product.objects.all()
         return context
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+        if self.request.user.is_authenticated and not self.request.user.is_staff:
+            queryset = queryset.filter(owner=self.request.user).order_by('-time_create')
+        elif not self.request.user.is_authenticated:
+            queryset = queryset.filter(is_published=True).order_by('-time_update')
+        return queryset
 
 
 class ProductCreateView(CreateView):
@@ -119,32 +131,58 @@ class ProductDetailView(DetailView):
     model = Product
 
 
-class ProductUpdateView(UpdateView):
+def is_valid_version(version):
+    """Функция для проверки номера версии продукта"""
+    pattern = r'^\d{1,2}\.\d{1,2}\.\d{1,2}$'
+    return re.match(pattern, version) is not None
+
+
+class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('catalog:index')
 
+    def get_form_class(self):
+        if not self.request.user.is_superuser and self.request.user.has_perm('catalog.set_published'):
+            return ModeratorProductForm
+        return ProductForm
+
     def get_context_data(self, **kwargs):
-        context_data = super().get_context_data(**kwargs)
-        SubjectFormset = inlineformset_factory(
-            Product, Version, form=VersionForm, extra=1)
-        if self.request.method == 'POST':
-            context_data['formset'] = SubjectFormset(
-                self.request.POST, instance=self.object)
-        else:
-            context_data['formset'] = SubjectFormset(instance=self.object)
-        return context_data
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Изменение товара'
+        if self.request.user == self.object.owner or self.request.user.is_superuser:
+            VersionFormset = inlineformset_factory(Product, Version, form=VersionForm, extra=1)
+            if self.request.method == 'POST':
+                context['formset'] = VersionFormset(self.request.POST, instance=self.object)
+            else:
+                context['formset'] = VersionFormset(instance=self.object)
+        return context
 
     def form_valid(self, form):
         formset = self.get_context_data()['formset']
-        self.object = form.save()
-        if formset.is_valid():
-            formset.instance = self.object
-            formset.save()
+        if self.request.user == self.object.owner or self.request.user.is_superuser:
+            if formset.is_valid():
+                actual_version_count = 0
+                for f in formset:
+                    num = f.cleaned_data.get('number')
+                    if num and not is_valid_version(num):
+                        form.add_error(None, "Версия должна быть формата Х.Х.Х или ХХ.ХХ.ХХ")
+                        return self.form_invalid(form=form)
 
+                    if f.cleaned_data.get('is_actual'):
+                        actual_version_count += 1
+                        if actual_version_count > 1:
+                            form.add_error(None, "Вы можете выбрать только одну активную версию")
+                            return self.form_invalid(form=form)
+
+                formset.save()
         return super().form_valid(form)
+
+    def handle_no_permission(self):
+        raise Http404('У вас нет прав для изменения этого товара')
 
 
 class ProductDeleteView(DeleteView):
     model = Product
     success_url = reverse_lazy('catalog:index')
+    permission_required = 'catalog.product-delete'
